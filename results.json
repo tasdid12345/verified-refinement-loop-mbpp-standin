@@ -1,0 +1,34 @@
+{
+  "question": "In a simple non-LLM stand-in for a generate-verify-refine loop, can a LightGBM edit-ranker plus a staged verification gate repair more buggy programs on hidden tests than a standard random-edit refinement loop at the same evaluation budget?",
+  "method": "MBPP reference solutions get 1-2 injected token bugs; first assert is visible, the rest hidden. Both loops use the same single-token edit pool, accept rule (visible pass count must not drop) and 30-execution budget. Improved ranks edits with LightGBM (trained on train-task edits, grid chosen by group-CV) and adds a syntax -> visible -> generated-input crash-comparison gate.",
+  "dataset": {
+    "name": "MBPP (full config, test split) with injected bugs",
+    "source_url": "https://huggingface.co/datasets/google-research-datasets/mbpp/resolve/main/full/test-00000-of-00001.parquet",
+    "n_rows": 490,
+    "n_train": 343,
+    "n_test": 147,
+    "same_as_paper": false,
+    "baseline_is_papers_method": false
+  },
+  "metric_name": "hidden-test pass rate (fraction of held-out tasks passing all hidden asserts)",
+  "higher_is_better": true,
+  "baseline": "Random single-token edit refinement loop, accepts an edit if visible-test pass count does not drop, 30 executions per task.",
+  "improved": "Same loop, pool and budget, but edits sampled by LightGBM score and candidates pass a staged gate (syntax, visible test, crash comparison on generated inputs vs previous version).",
+  "metrics": {
+    "baseline_score": 0.17460317460317462,
+    "baseline_score_std": 0.021028613368470988,
+    "improved_score": 0.2018140589569161,
+    "improved_score_std": 0.02795652609056225,
+    "baseline_visible_pass": 0.272108843537415,
+    "baseline_visible_pass_std": 0.02939111427849369,
+    "improved_visible_pass": 0.2879818594104308,
+    "improved_visible_pass_std": 0.016968967740471384,
+    "baseline_mean_execs": 22.907029478458046,
+    "baseline_mean_execs_std": 0.7103190438168795,
+    "improved_mean_execs": 23.170068027210885,
+    "improved_mean_execs_std": 0.4791292537611748,
+    "improvement": 0.02721088435374147,
+    "ranker_cv_auc": 0.8694829443631985
+  },
+  "notes": "Synthetic bugs on MBPP, not LiveCodeBench and no LLM; weak proxy for CodeGrad. Test split is 30% (not 50%) of usable tasks. Only drafts failing the visible test are kept. Gate executions count toward the 30-execution budget. Ranker label = edit restores the reference token (train tasks only). Loops stop when the visible test passes, so overfitting to the single visible test is possible. Std is over loop seeds 42-44 on one fixed task split."
+}
