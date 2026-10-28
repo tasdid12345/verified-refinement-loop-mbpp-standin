@@ -24,6 +24,31 @@ python analysis.py
 ## Results
 Results are written to `results.json` (and a chart to `figures/`).
 
+## Results (latest run)
+
+On MBPP test split with injected bugs (147 held-out tasks), a standard random-edit refinement loop reached 17.5% hidden-test pass rate versus 20.2% for my LightGBM-ranked, gated loop, a small 2.7-point gain within seed noise.
+
+| Metric | Value |
+|---|---|
+| baseline_score | 0.1746 |
+| baseline_score_std | 0.02103 |
+| improved_score | 0.2018 |
+| improved_score_std | 0.02796 |
+| baseline_visible_pass | 0.2721 |
+| baseline_visible_pass_std | 0.02939 |
+| improved_visible_pass | 0.288 |
+| improved_visible_pass_std | 0.01697 |
+| baseline_mean_execs | 22.91 |
+| baseline_mean_execs_std | 0.7103 |
+| improved_mean_execs | 23.17 |
+| improved_mean_execs_std | 0.4791 |
+| improvement | 0.02721 |
+| ranker_cv_auc | 0.8695 |
+
+Run on 2026-10-28. Full output: [results.json](results.json) · [run.log](run.log)
+
+Notes: Synthetic bugs on MBPP, not LiveCodeBench and no LLM; weak proxy for CodeGrad. Test split is 30% (not 50%) of usable tasks. Only drafts failing the visible test are kept. Gate executions count toward the 30-execution budget. Ranker label = edit restores the reference token (train tasks only). Loops stop when the visible test passes, so overfitting to the single visible test is possible. Std is over loop seeds 42-44 on one fixed task split.
+
 ## Reference
 
 This project is motivated by the following paper:
